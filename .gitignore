@@ -13,6 +13,12 @@
 *.str
 vivado*.backup.*
 
+# === Vivado 仿真产物 ===
+xsim.dir/
+*.wdb
+*.wcfg
+*.pb
+
 # === Claude 调试临时产物 ===
 _claude_*
 _verify_*

@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 `include "param.v"
 
 module bus_top(
