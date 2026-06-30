@@ -1,0 +1,20 @@
+# === Vivado 生成文件（可由源码重新生成，不入库）===
+*.cache/
+*.gen/
+*.hw/
+*.ip_user_files/
+*.runs/
+*.sim/
+.Xil/
+
+# === Vivado 日志/日志备份 ===
+*.jou
+*.log
+*.str
+vivado*.backup.*
+
+# === Claude 调试临时产物 ===
+_claude_*
+_verify_*
+_locate_*
+_inspect*
