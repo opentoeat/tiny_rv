@@ -41,6 +41,7 @@ input                           u_i,
 input                           TYPE_LOAD_i,
 
 input                           stop_ID,
+input                           hold_EX,
 
 output   reg                       TYPE_LOAD_o,
 output   reg                       u_o,
@@ -75,6 +76,9 @@ always @(posedge clk or negedge rst_n) begin
         wr_o <= 5'd0;
         u_o <= 1'b0;
         TYPE_LOAD_o <= 1'b0;
+    end
+    else if(hold_EX)begin
+        //冻结：BRAM load stall 期间保持 ID_EX 输出不变
     end
     else if(stop_ID)begin
         ALUop_o <= 5'd0;

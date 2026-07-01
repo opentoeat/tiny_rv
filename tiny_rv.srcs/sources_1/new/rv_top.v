@@ -159,6 +159,10 @@ wire            [4:0]           ALUop_MEM;
 wire                            stop_ID;
 wire                            stop_IF;
 wire                            isRiskCtrl;
+wire                            stop_MEM;
+wire                            hold_EX;
+wire                            load_in_MEM;
+assign load_in_MEM = (rwsel_MEM == 2'b01) && regwe_MEM;   // 2'b01 = WB_DRAM_Rd (load)
 
 
 assign addr = ALUout_MEM;
@@ -280,11 +284,16 @@ bypass bypass(
 
 
 EXCEPTION_CTRL EXCEPTION_CTRL(
+.clk(clk),
+.rst_n(rst_n),
 .Load_use_risk(Load_use_risk),      //load-use冒险
 .isRiskCtrl(isRiskCtrl),         //控制冒险
+.load_in_MEM(load_in_MEM),
 
 .stop_ID(stop_ID),            //ID
-.stop_IF(stop_IF)
+.stop_IF(stop_IF),
+.stop_MEM(stop_MEM),
+.hold_EX(hold_EX)
     );
 
 ID_EX ID_EX(
@@ -305,6 +314,7 @@ ID_EX ID_EX(
 .u_i                        (u_ID),
 .TYPE_LOAD_i                (TYPE_LOAD_ID),
 .stop_ID                    (stop_ID),
+.hold_EX                     (hold_EX),
 
 .TYPE_LOAD_o                (TYPE_LOAD_EX),
 .u_o                        (u_EX),
@@ -347,6 +357,7 @@ EX_MEM EX_MEM(
 .regwe_i                    (regwe_EX),
 .wr_i                       (wr_EX),
 .ALUop_i                    (ALUop_EX),
+.stop_MEM                    (stop_MEM),
 
 .ALUop_o                    (ALUop_MEM),
 .ALUout_o                   (ALUout_MEM),
