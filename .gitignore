@@ -20,7 +20,7 @@ xsim.dir/
 *.pb
 
 # === Claude 调试临时产物 ===
-_claude_*
-_verify_*
+_claude*
+_verify*
 _locate_*
 _inspect*
