@@ -98,6 +98,12 @@ always @ (*) begin
              3'b001: begin // bne
                  PCSel_r = (MUXA_out != MUXB_out) ? 1'b1 : 1'b0;
              end
+             3'b100: begin // blt 有符号 <
+                 PCSel_r = ($signed(MUXA_out) < $signed(MUXB_out)) ? 1'b1 : 1'b0;
+             end
+             3'b110: begin // bltu 无符号 <
+                 PCSel_r = (MUXA_out < MUXB_out) ? 1'b1 : 1'b0;
+             end
              3'b1?1: begin // bge / bgeu
                  PCSel_r = (MUXA_out > MUXB_out) ? 1'b1 : 1'b0;
              end
@@ -136,7 +142,8 @@ always @(*) begin
         rwsel = `WB_ALU_out;
     end
     else if(u)begin
-        rwsel = `WB_IMM_OUT;
+        if(opecode == 7'b0010111) rwsel = `WB_ALU_out;  // AUIPC: 写回 PC+imm
+        else                       rwsel = `WB_IMM_OUT;  // LUI: 写回 imm
     end
     else begin
         rwsel = `WB_ALU_out;   //默认值，消除 latch（store/branch 无写回，由 regwe 屏蔽）
@@ -203,6 +210,9 @@ always @(*) begin
         else if(funct3 == 3'b001)begin
             ALUop = `SLLI;
         end
+        else if(funct3 == 3'b101)begin
+            ALUop = funct7[30] ? `SRA : `SRL;   // SRAI : SRLI
+        end
     end
     else if(s) begin
         if(funct3 == 3'b010)begin
@@ -223,6 +233,9 @@ always @(*) begin
     else if(u)begin
         if(opecode == 7'b0110111)begin
             ALUop = `LUI;
+        end
+        else if(opecode == 7'b0010111)begin
+            ALUop = `ADD;   // AUIPC: PC + imm
         end
     end
     else if(j)begin
@@ -300,8 +313,8 @@ end
 
 //Asel,应该反过来
 always @(*) begin
-    if(j)begin
-        Asel = 1'b1;   //选择pc，`Asel_pc      只有j型指令
+    if(j || (opecode == 7'b0010111))begin
+        Asel = 1'b1;   //选择pc：JAL 或 AUIPC
     end
     else begin
         Asel = 1'b0;   //选择rd1，`Asel_Rd1
