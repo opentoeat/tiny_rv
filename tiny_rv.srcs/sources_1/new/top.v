@@ -84,7 +84,7 @@ key_debounce key_debounce_3(
 wire  [12:0]          ram_addr;
 wire  [31:0]          ram_data;
 
-wire  [15:0]          vga_ram_data;
+wire                  vga_ram_data;
 wire  [18:0]          vga_ram_addr;
 
 wire  [31:0]          in_data;
@@ -128,7 +128,7 @@ Vga_ram Vga_ram (
   .ena              (1'b1),         
   .wea              (vga_we),            
   .addra            (vga_ram_addr),  
-  .dina             (vga_ram_data[0]),    
+  .dina             (vga_ram_data),    
   .clkb             (clk_25m),    
   .enb              (1'b1),      
   .addrb            (bram_addr),//{5'd0,bram_addr[18:5]}),                    // input wire [18 : 0] addrb
@@ -149,7 +149,7 @@ vga_bram_rgb565_sync vga_bram_rgb565_sync(
 .rst          (rst_n),
 
 .bram_addr    (bram_addr),        // 19位地址线
-.bram_data    ({16{bram_data}}),        // 16位RGB565像素数据
+.bram_data    (bram_data),              // 1bpp 像素（0=黑,1=白）
 
 .hsync        (vga_href),
 .vsync        (vga_vsync),

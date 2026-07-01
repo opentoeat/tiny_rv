@@ -15,7 +15,7 @@ module bus_top(
     output reg  [12:0]          ram_addr,
     output reg  [31:0]          ram_data,
     //VGA显存接口（写路径已时序化，打一拍）
-    output reg  [15:0]          vga_data,
+    output reg                  vga_data,
     output reg  [18:0]          vga_addr,
     output reg                  vga_we,         //显存写使能（寄存后）
     //按键接口
@@ -58,13 +58,13 @@ end
 // =====================================================================
 always @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
-        vga_data <= 16'd0;
+        vga_data <= 1'b0;
         vga_addr <= 19'd0;
         vga_we   <= 1'b0;
     end
     else begin
         vga_we   <= (we && (addr[31:28] == 4'h1));   //下一拍生效，与数据同步
-        vga_data <= wdata[15:0];
+        vga_data <= wdata[0];
         vga_addr <= addr[20:2];
     end
 end

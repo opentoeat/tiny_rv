@@ -9,7 +9,7 @@ module bus_top_tb;
   wire [4:0]  ctrl;
   wire [12:0] ram_addr;
   wire [31:0] ram_data;
-  wire [15:0] vga_data;
+  wire        vga_data;
   wire [18:0] vga_addr;
   wire        vga_we;
   integer     errs=0;
@@ -58,12 +58,12 @@ module bus_top_tb;
     chk32("wr_dram_ctrl", {27'd0,ctrl}, 32'h00000001);
 
     // 4) 写显存（时序：vga_we/vga_data/vga_addr 下一拍才生效）
-    we=1; addr=32'h1000_0004; wdata=32'h00009ABC; #1;
+    we=1; addr=32'h1000_0004; wdata=32'h00009ABD; #1;   // bit0=1
     chk32("wr_vga_we_now0", {31'd0,vga_we}, 32'd0);          // 当拍还没打拍
     exp_vga_addr = {13'd0, addr[20:2]};
     @(posedge clk); #1;
     chk32("wr_vga_we_next1",  {31'd0,vga_we},   32'd1);
-    chk32("wr_vga_data_next", {16'd0,vga_data}, 32'h00009ABC);
+    chk32("wr_vga_data_next", {31'd0,vga_data}, 32'd1);
     chk32("wr_vga_addr_next", {13'd0,vga_addr}, exp_vga_addr);
 
     // 5) 停止写显存，vga_we 下拍应回 0

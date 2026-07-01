@@ -1,14 +1,14 @@
 module vga_bram_rgb565_sync(
     input         clk,         // 25.175MHz VGA时钟
     input         rst,
-    // BRAM接口
+    // BRAM接口（1bpp 显存）
     output [18:0] bram_addr,   // 19位地址线
-    input  [15:0] bram_data,   // 16位RGB565像素数据
+    input         bram_data,   // 1bpp 像素（0=黑, 1=白）
     // VGA接口
     output        hsync,
     output        vsync,
     output        video_on,
-    output [11:0] vga_data     // 16位RGB565输出
+    output [11:0] vga_data     // 12位 RGB444 输出
 );
 
     // VGA控制器信号
@@ -36,17 +36,13 @@ module vga_bram_rgb565_sync(
         hsync_d     <= hsync_raw;
         vsync_d     <= vsync_raw;
         video_on_d  <= video_on_raw;
-        vga_data_d  <=  
-        { bram_data[15:12],    // R[4:1]
-          bram_data[10:7],     // G[5:2]
-          bram_data[4:1]       // B[4:1]
-        };
+        vga_data_d  <= {12{bram_data}};   // 1bpp: 1=白(0xFFF) 0=黑(0x000)
     end
 
     // 输出对齐延迟后信号
     assign hsync    = hsync_d;
     assign vsync    = vsync_d;
     assign video_on = video_on_d;
-    assign vga_data = video_on_d ? vga_data_d : 11'd0;
+    assign vga_data = video_on_d ? vga_data_d : 12'd0;
 
 endmodule
