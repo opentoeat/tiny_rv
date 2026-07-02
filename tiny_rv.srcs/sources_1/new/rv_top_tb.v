@@ -12,9 +12,9 @@ module rv_top_tb();
         #202 rst_n = 1'b1;
     end
 
-    // 监控 PC 推进：验证 load-freeze 没让 CPU 死锁/跑飞
+    // 监控 PC 推进 + load 自检：观察 t2(x7) 是否 = 0xA5（store→load 经 BRAM+freeze）
     always @(posedge clk) begin
-        if (rst_n) $display("t=%0t PC=%h", $time, top.rv_top.pc_IF);
+        if (rst_n) $display("t=%0t PC=%h x7(t2)=%h", $time, top.rv_top.pc_IF, top.rv_top.ID.u_Regfile.Regfile[7]);
     end
 
     initial begin
