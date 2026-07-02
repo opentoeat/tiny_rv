@@ -66,6 +66,14 @@ module ctrl_tb;
     aOp=5'b00111; #1;   // SRA: 0x80000000 >>> 4 = 0xF8000000 (符号位填充)
     chk32("alu_sra", aOut, 32'hF8000000);
 
+    // ===== SLT / SLTU 比较验证 =====
+    aA=32'hFFFFFFFB; aB=32'h00000003;
+    aOp=5'b00011; #1;   // SLT 有符号: -5 < 3 -> 1
+    chk32("alu_slt", aOut, 32'd1);
+    aA=32'h00000003; aB=32'h00000100;   // B=256，B[4:0]=0（能区分 bug）
+    aOp=5'b00100; #1;   // SLTU 无符号: 3 < 256 -> 1（修复前 bug: 3<0 -> 0）
+    chk32("alu_sltu", aOut, 32'd1);
+
     $display("==== TB DONE: errors=%0d ====", errs);
     if (errs==0) $display("ALL_PASS"); else $display("HAS_FAIL");
     $finish;
