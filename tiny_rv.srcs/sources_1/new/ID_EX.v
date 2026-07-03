@@ -26,6 +26,7 @@ input                           rst_n,
 input       [31:0]              pc4_i,
 //控制信号  
 input       [4:0]               ALUop_i,
+input       [2:0]               M_op_i,
 input                           DRAMWE_i,
 input       [1:0]               rwsel_i,
 input                           branch_sel_i,
@@ -48,6 +49,7 @@ output   reg                       u_o,
 output   reg    [4:0]              wr_o,
 output   reg    [31:0]             pc4_o,
 output   reg    [4:0]              ALUop_o,
+output   reg    [2:0]              M_op_o,
 output   reg                       DRAMWE_o,
 output   reg    [1:0]              rwsel_o,
 output   reg                       regwe_o,
@@ -63,6 +65,7 @@ output   reg    [31:0]             imm_out_o
 always @(posedge clk or negedge rst_n) begin
     if(!rst_n)begin
         ALUop_o <= 5'd0;
+        M_op_o <= 3'd0;
         DRAMWE_o <= 1'b0;
         rwsel_o <= 2'd0;
         branch_sel_o <= 1'b0;
@@ -82,6 +85,7 @@ always @(posedge clk or negedge rst_n) begin
     end
     else if(stop_ID)begin
         ALUop_o <= 5'd0;
+        M_op_o <= 3'd0;
         DRAMWE_o <= 1'b0;
         rwsel_o <= 2'd0;
         branch_sel_o <= 1'b0;
@@ -101,6 +105,7 @@ always @(posedge clk or negedge rst_n) begin
         u_o <= u_i;
         pc4_o <= pc4_i;
         ALUop_o <= ALUop_i;
+        M_op_o <= M_op_i;
         DRAMWE_o <= DRAMWE_i;
         rwsel_o <= rwsel_i;
         branch_sel_o <= branch_sel_i;

@@ -163,6 +163,9 @@ wire                            stop_MEM;
 wire                            hold_EX;
 wire                            load_in_MEM;
 assign load_in_MEM = (rwsel_MEM == 2'b01) && regwe_MEM;   // 2'b01 = WB_DRAM_Rd (load)
+wire        [2:0]               M_op_ID;
+wire        [2:0]               M_op_EX;
+wire                            div_busy;
 
 
 assign addr = ALUout_MEM;
@@ -221,7 +224,8 @@ CTRL CTRL(
 .DRAMWE                     (DRAMWE_ID),         //dram的写使能                   完成
 .rwsel                      (rwsel_ID),          //写回选择信号                   完成
 .branch_sel                 (branch_sel_ID),        //控制是j型还是b型              完成
-.TYPE_LOAD                  (TYPE_LOAD_ID)
+.TYPE_LOAD                  (TYPE_LOAD_ID),
+.M_op                       (M_op_ID)
     );
 
 assign isRiskCtrl = PCsel_ID;
@@ -289,6 +293,7 @@ EXCEPTION_CTRL EXCEPTION_CTRL(
 .Load_use_risk(Load_use_risk),      //load-use冒险
 .isRiskCtrl(isRiskCtrl),         //控制冒险
 .load_in_MEM(load_in_MEM),
+.div_busy(div_busy),
 
 .stop_ID(stop_ID),            //ID
 .stop_IF(stop_IF),
@@ -302,6 +307,7 @@ ID_EX ID_EX(
 .wr_i                       (wr_ID),
 .regwe_i                    (regwe_ID),
 .ALUop_i                    (ALUop_ID),
+.M_op_i                     (M_op_ID),
 .DRAMWE_i                   (DRAMWE_ID),
 .rwsel_i                    (rwsel_ID),
 .branch_sel_i               (branch_sel_ID),
@@ -321,6 +327,7 @@ ID_EX ID_EX(
 .wr_o                       (wr_EX),
 .regwe_o                    (regwe_EX),
 .ALUop_o                    (ALUop_EX),
+.M_op_o                     (M_op_EX),
 .DRAMWE_o                   (DRAMWE_EX),
 .rwsel_o                    (rwsel_EX),
 .branch_sel_o               (branch_sel_EX),
@@ -339,6 +346,10 @@ EX EX(
 .MUXA_out                   (MUXA_out_EX),
 .MUXB_out                   (MUXB_out_EX),
 .ALUop                      (ALUop_EX),      //控制模块传入的
+.M_op                       (M_op_EX),       //M扩展子操作
+.clk                        (clk),
+.rst_n                      (rst_n),
+.div_busy                   (div_busy),
 
 .ALUout                     (ALUout_EX)     //得到的输出
 //.negative                   (negative),   //是否为负数

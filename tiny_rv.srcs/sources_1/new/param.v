@@ -42,6 +42,7 @@
 `define LUI     5'b10101    //加载长立即数
 //J型指令
 `define JAL     5'b10110    //jump and link
+`define M_EXT    5'b11001    //M扩展（MUL/MULH/MULHSU/MULHU/DIV/DIVU/REM/REMU，由 M_op=funct3 区分）
 
 //总线信号
 `define IO_BUSWIDTH_ADDR 32
